@@ -1,8 +1,33 @@
+from flask import Flask, jsonify
+from flask import request
+import sqlite3
 import requests
 import openpyxl
 import urllib.request
 import sqlite3
 import pandas as pd
+
+app = Flask(__name__)
+
+@app.route('/data')
+def get_data():
+    well = request.args.get("well")
+    conn = sqlite3.connect('data.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT oil, gas, brine FROM table1 WHERE API_WELL_NUMBER = ?', (well,))
+    result = cursor.fetchone()
+    conn.close()
+
+    if result:
+        data = {'oil': result[0], 
+                'gas': result[1], 
+                'brine': result[2]}
+        return jsonify(data)
+    else:
+        return 'Data not found for the specified well.'
+
+if __name__ == '__main__':
+    app.run(port=8080)
 
 url = 'https://ohiodnr.gov/static/documents/oil-gas/production/20110309_2020_1%20-%204.xls'
 filename = 'production_data.xls'
@@ -31,28 +56,3 @@ for row in data_csv.itertuples(index=False):
 conn.commit()
 conn.close()
 
-from flask import Flask, jsonify
-from flask import request
-import sqlite3
-
-app = Flask(__name__)
-
-@app.route('/data')
-def get_data():
-    well = request.args.get("well")
-    conn = sqlite3.connect('data.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT oil, gas, brine FROM table1 WHERE API_WELL_NUMBER = ?', (well,))
-    result = cursor.fetchone()
-    conn.close()
-
-    if result:
-        data = {'oil': result[0], 
-                'gas': result[1], 
-                'brine': result[2]}
-        return jsonify(data)
-    else:
-        return 'Data not found for the specified well.'
-
-if __name__ == '__main__':
-    app.run(port=8080)
