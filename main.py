@@ -6,11 +6,6 @@ import openpyxl
 import urllib.request
 import sqlite3
 import pandas as pd
-url = 'https://ohiodnr.gov/static/documents/oil-gas/production/20110309_2020_1%20-%204.xls'
-filename = 'data1.xls'
-response = requests.get(url)
-with open(filename, 'wb') as file:
-   file.write(response.content)
 
 data = pd.read_excel('abc.xls')
 annual_data = data.groupby('API WELL  NUMBER').sum()
