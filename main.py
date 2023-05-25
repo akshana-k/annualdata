@@ -29,11 +29,7 @@ def get_data():
 if __name__ == '__main__':
     app.run(port=8080)
 
-url = 'https://ohiodnr.gov/static/documents/oil-gas/production/20110309_2020_1%20-%204.xls'
-filename = 'production_data.xls'
-response = requests.get(url)
-with open(filename, 'wb') as file:
-    file.write(response.content)
+
 data = pd.read_excel('abc.xls')
 annual_data = data.groupby('API WELL  NUMBER').sum()
 annual_data.to_excel('data.xls',engine='openpyxl')
