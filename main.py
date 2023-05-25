@@ -7,28 +7,6 @@ import urllib.request
 import sqlite3
 import pandas as pd
 
-data = pd.read_excel('abc.xls')
-annual_data = data.groupby('API WELL  NUMBER').sum()
-annual_data.to_excel('data.xls',engine='openpyxl')
-
-conn = sqlite3.connect('data.db')
-cursor = conn.cursor()
-cursor.execute('''CREATE TABLE IF NOT EXISTS table1 (
-                    API_WELL_NUMBER TEXT,
-                    oil INTEGER,
-                    gas INTEGER,
-                    brine INTEGER
-                  )''')
-data = pd.read_excel('data.xls',usecols=[0,8,9,10])
-data.to_csv("data.csv",index=None,header=True)
-data_csv=pd.read_csv('data.csv')
-
-sql ='INSERT INTO table1 (API_WELL_NUMBER, oil, gas, brine) VALUES (?,?,?,?)'
-for row in data_csv.itertuples(index=False):
-    cursor.execute(sql,row)
-conn.commit()
-conn.close()
-
 app = Flask(__name__)
 
 @app.route('/data')
@@ -50,3 +28,25 @@ def get_data():
 
 if __name__ == '__main__':
     app.run(port=8080)
+
+data = pd.read_excel('abc.xls')
+annual_data = data.groupby('API WELL  NUMBER').sum()
+annual_data.to_excel('data.xls',engine='openpyxl')
+
+conn = sqlite3.connect('data.db')
+cursor = conn.cursor()
+cursor.execute('''CREATE TABLE IF NOT EXISTS table1 (
+                    API_WELL_NUMBER TEXT,
+                    oil INTEGER,
+                    gas INTEGER,
+                    brine INTEGER
+                  )''')
+data = pd.read_excel('data.xls',usecols=[0,8,9,10])
+data.to_csv("data.csv",index=None,header=True)
+data_csv=pd.read_csv('data.csv')
+
+sql ='INSERT INTO table1 (API_WELL_NUMBER, oil, gas, brine) VALUES (?,?,?,?)'
+for row in data_csv.itertuples(index=False):
+    cursor.execute(sql,row)
+conn.commit()
+conn.close()
