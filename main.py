@@ -29,7 +29,6 @@ def get_data():
 if __name__ == '__main__':
     app.run(port=8080)
 
-
 data = pd.read_excel('abc.xls')
 annual_data = data.groupby('API WELL  NUMBER').sum()
 annual_data.to_excel('data.xls',engine='openpyxl')
@@ -51,4 +50,3 @@ for row in data_csv.itertuples(index=False):
     cursor.execute(sql,row)
 conn.commit()
 conn.close()
-
